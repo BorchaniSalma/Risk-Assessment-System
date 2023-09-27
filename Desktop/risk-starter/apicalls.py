@@ -4,7 +4,9 @@ import json
 
 with open('config.json', 'r') as f:
     config = json.load(f)
-    test_data_path = os.path.join(config['test_data_path'])
+test_data_path = os.path.join(config['test_data_path'])
+model_path = os.path.join(config['output_model_path'])
+
 
 # Define the API endpoints
 # Replace with your actual host and port
@@ -35,4 +37,6 @@ combined_responses = {
     "summarystats": summarystats_response.json(),
     "diagnostics": diagnostics_response.json(),
 }
-print(combined_responses)
+with open(os.path.join(os.getcwd(), model_path, 'apireturns.txt'), 'w') \
+        as score_file:
+    json.dump(combined_responses, score_file)

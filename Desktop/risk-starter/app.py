@@ -1,11 +1,9 @@
-import subprocess
 import pandas as pd
 import os
 import json
 from flask import Flask, jsonify, request
 from diagnostics import model_predictions, dataframe_summary, \
     missing_percentage, execution_time, outdated_packages_list
-from scoring import score_model
 
 # Set up variables for use in our script
 app = Flask(__name__)
