@@ -12,12 +12,22 @@ output_folder_path = config['output_folder_path']
 # List to store the names of ingested files
 ingested_files = []
 
-# Function for data ingestion
-
 
 def merge_multiple_dataframe():
-    # Create an empty list to store DataFrames
-    df_list = []
+    """
+    Merge multiple CSV files into a single CSV file and record ingested files.
+
+    This function reads CSV files from the specified input folder,
+     compiles them
+    together into a single DataFrame, removes duplicate rows, and writes the
+    resulting DataFrame to a CSV file in the specified output folder. It also
+    records the names of the ingested files in 'ingestedfiles.txt'
+    in the output folder.
+
+    Returns:
+        None
+    """
+    df_list = []  # Create an empty list to store DataFrames
 
     # Check for datasets, compile them together, and write to an output file
     filenames = os.listdir(os.getcwd()+'/'+input_folder_path)
