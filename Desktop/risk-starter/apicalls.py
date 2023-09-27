@@ -1,20 +1,38 @@
 import requests
+import os
+import json
 
-#Specify a URL that resolves to your workspace
-URL = "http://127.0.0.1/"
+with open('config.json', 'r') as f:
+    config = json.load(f)
+    test_data_path = os.path.join(config['test_data_path'])
 
+# Define the API endpoints
+# Replace with your actual host and port
+prediction_endpoint = "http://127.0.0.1:5000/prediction"
+# Replace with your actual host and port
+scoring_endpoint = "http://127.0.0.1:5000/scoring"
+# Replace with your actual host and port
+summarystats_endpoint = "http://127.0.0.1:5000/summarystats"
+# Replace with your actual host and port
+diagnostics_endpoint = "http://127.0.0.1:5000/diagnostics"
 
+# Make API requests
+# Call the prediction endpoint with a sample file_name
+response_pred = requests.post(
+    'http://127.0.0.1:5000/prediction',
+    json={
+        'file_name': os.path.join(test_data_path + '/' + 'testdata.csv')}).text
 
-#Call each API endpoint and store the responses
-response1 = #put an API call here
-response2 = #put an API call here
-response3 = #put an API call here
-response4 = #put an API call here
+# Call the scoring, summarystats, and diagnostics endpoints
+scoring_response = requests.get(scoring_endpoint)
+summarystats_response = requests.get(summarystats_endpoint)
+diagnostics_response = requests.get(diagnostics_endpoint)
 
-#combine all API responses
-responses = #combine reponses here
-
-#write the responses to your workspace
-
-
-
+# Combine the responses into a dictionary
+combined_responses = {
+    "prediction": response_pred,
+    "scoring": scoring_response.json(),
+    "summarystats": summarystats_response.json(),
+    "diagnostics": diagnostics_response.json(),
+}
+print(combined_responses)

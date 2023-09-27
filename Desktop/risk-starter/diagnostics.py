@@ -27,9 +27,7 @@ def model_predictions(X_dataframe):
     """
     with open(model_path + '/' + 'trainedmodel.pkl', 'rb') as file:
         model = pickle.load(file)
-    X = X_dataframe[['lastmonth_activity',
-                     'lastyear_activity', 'number_of_employees']]
-    y_predicted = model.predict(X)
+    y_predicted = model.predict(X_dataframe)
     return y_predicted
 
 
