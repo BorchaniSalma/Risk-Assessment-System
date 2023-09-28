@@ -37,6 +37,6 @@ combined_responses = {
     "summarystats": summarystats_response.json(),
     "diagnostics": diagnostics_response.json(),
 }
-with open(os.path.join(os.getcwd(), model_path, 'apireturns.txt'), 'w') \
+with open(os.path.join(os.getcwd(), model_path, 'apireturns2.txt'), 'w') \
         as score_file:
     json.dump(combined_responses, score_file)

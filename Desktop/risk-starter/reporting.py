@@ -34,7 +34,7 @@ def confusion():
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
     plt.title('Confusion Matrix')
-    plt.savefig(model_path + '/' + 'confusionmatrix.png')
+    plt.savefig(model_path + '/' + 'confusionmatrix2.png')
 
 
 if __name__ == '__main__':

@@ -66,8 +66,9 @@ if data:
         # Diagnostics and reporting
         # run diagnostics.py and reporting.py for the re-deployed model
         model_predictions()
-        confusion()
         execution_time()
         dataframe_summary()
         missing_percentage()
         outdated_packages_list()
+    confusion()
+    os.system("python apicalls.py")
