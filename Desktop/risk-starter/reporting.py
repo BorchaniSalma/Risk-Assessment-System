@@ -5,7 +5,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 import os
-
+import logging
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load config.json and get path variables
 with open('config.json', 'r') as f:

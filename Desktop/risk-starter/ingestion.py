@@ -5,19 +5,29 @@ Author : Salma Borchani
 
 Date : 15th July 2024
 '''
+from pathlib import Path
 import pandas as pd
-import os
 import json
+import logging
+import time
+from glob import glob
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load config.json and get input and output paths
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-input_folder_path = config['input_folder_path']
-output_folder_path = config['output_folder_path']
+INPUT_FOLDER_PATH = Path(config['input_folder_path'])
+OUTPUT_FOLDER_PATH = Path(config['output_folder_path'])
+OUTPUT_CSV_FILE = OUTPUT_FOLDER_PATH / 'finaldata.csv'
+INGESTED_FILES_LOG = OUTPUT_FOLDER_PATH / f"ingestedfiles_{time.strftime('%y%m%d%H%M%S')}.txt"
 
-# List to store the names of ingested files
-ingested_files = []
+def clean_dataset(pd,df_list):
+    result = pd.concat(df_list, ignore_index=True).drop_duplicates()
+    return result
+
 
 
 def merge_multiple_dataframe():
@@ -35,36 +45,37 @@ def merge_multiple_dataframe():
         None
     """
     df_list = []  # Create an empty list to store DataFrames
+    ingested_files = []   # List to store the names of ingested files
 
-    # Check for datasets, compile them together, and write to an output file
-    filenames = os.listdir(os.getcwd()+'/'+input_folder_path)
-    for each_filename in filenames:
-        file_path = (os.getcwd()+'/'+input_folder_path+'/'+each_filename)
+    # Use glob to find all CSV files in the input folder
+    csv_files = glob(str(INPUT_FOLDER_PATH / '*.csv'))
+
+    for each_filename in csv_files:
         try:
-            df1 = pd.read_csv(file_path)
-            if not df1.empty:  # Check if the DataFrame is not empty
-                df_list.append(df1)
+            df = pd.read_csv(each_filename)
+            if not df.empty:  # Check if the DataFrame is not empty
+                df_list.append(df)
                 # Record the ingested file
-                ingested_files.append(each_filename)
+                ingested_files.append(Path(each_filename).name)
             else:
-                print(f"Skipping empty file: {file_path}")
+                logging.warning(f"Skipping empty file: {each_filename}")
         except pd.errors.EmptyDataError:
-            print(f"Skipping empty file: {file_path}")
+            logging.warning(f"Skipping empty file: {each_filename}")
+        except Exception as e:
+            logging.error(f"Error reading {each_filename}: {e}")
 
     if df_list:
-        result = pd.concat(df_list, ignore_index=True).drop_duplicates()
-        output_file_path = (
-            os.getcwd()+'/'+output_folder_path+'/'+'finaldata.csv')
-        result.to_csv(output_file_path, index=False)
+        result = clean_dataset(pd,df_list)
+        result.to_csv(OUTPUT_CSV_FILE, index=False)
+        logging.info(f"Merged data saved to {OUTPUT_CSV_FILE}")
     else:
-        print("No valid data found in the input files.")
+        logging.warning("No valid data found in the input files.")
 
-    # Save the list of ingested files to ingestedfiles.txt
-    with open(os.getcwd()+'/'+output_folder_path+'/'+'ingestedfiles.txt',
-              'w') as file:
+    # Save the list of ingested files to a timestamped ingestedfiles log
+    with INGESTED_FILES_LOG.open('w') as file:
         for ingested_file in ingested_files:
             file.write(ingested_file + '\n')
-
+    logging.info(f"Ingested files list saved to {INGESTED_FILES_LOG}")
 
 if __name__ == '__main__':
     merge_multiple_dataframe()
