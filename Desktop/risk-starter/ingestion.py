@@ -1,3 +1,10 @@
+'''
+Risk Assessment System
+
+Author : Salma Borchani
+
+Date : 15th July 2024
+'''
 import pandas as pd
 import os
 import json
