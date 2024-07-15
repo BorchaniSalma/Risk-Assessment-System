@@ -13,7 +13,8 @@ import time
 from glob import glob
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load config.json and get input and output paths
 with open('config.json', 'r') as f:
@@ -22,12 +23,25 @@ with open('config.json', 'r') as f:
 INPUT_FOLDER_PATH = Path(config['input_folder_path'])
 OUTPUT_FOLDER_PATH = Path(config['output_folder_path'])
 OUTPUT_CSV_FILE = OUTPUT_FOLDER_PATH / 'finaldata.csv'
-INGESTED_FILES_LOG = OUTPUT_FOLDER_PATH / f"ingestedfiles_{time.strftime('%y%m%d%H%M%S')}.txt"
+INGESTED_FILES_LOG = OUTPUT_FOLDER_PATH / \
+    f"ingestedfiles_{time.strftime('%y%m%d%H%M%S')}.txt"
 
-def clean_dataset(pd,df_list):
+
+def clean_dataset(df_list):
+    """
+    Concatenate a list of DataFrames and remove duplicate rows.
+
+    This function takes a list of pandas DataFrames, concatenates them
+    into a single DataFrame, and then removes any duplicate rows.
+
+    Args:
+        df_list (list): A list of pandas DataFrames to be concatenated and cleaned.
+
+    Returns:
+        pd.DataFrame: A concatenated DataFrame with duplicate rows removed.
+    """
     result = pd.concat(df_list, ignore_index=True).drop_duplicates()
     return result
-
 
 
 def merge_multiple_dataframe():
@@ -65,7 +79,7 @@ def merge_multiple_dataframe():
             logging.error(f"Error reading {each_filename}: {e}")
 
     if df_list:
-        result = clean_dataset(pd,df_list)
+        result = clean_dataset(df_list)
         result.to_csv(OUTPUT_CSV_FILE, index=False)
         logging.info(f"Merged data saved to {OUTPUT_CSV_FILE}")
     else:
@@ -76,6 +90,7 @@ def merge_multiple_dataframe():
         for ingested_file in ingested_files:
             file.write(ingested_file + '\n')
     logging.info(f"Ingested files list saved to {INGESTED_FILES_LOG}")
+
 
 if __name__ == '__main__':
     merge_multiple_dataframe()
