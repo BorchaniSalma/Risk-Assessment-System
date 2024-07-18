@@ -25,7 +25,7 @@ test_data_path = Path(config['test_data_path'])
 model_path = Path(config['prod_deployment_path'])
 
 
-def score_model():
+def score_model(dropped_columns=None):
     """
     Calculate the F1 score of a trained model on test data and write the result to a file.
 
@@ -39,13 +39,15 @@ def score_model():
     # Load the test data
     test_data = pd.read_csv(test_data_path / 'testdata.csv')
 
+    if dropped_columns is None:
+        dropped_columns = ['corporation']
+
     # Load the trained model
     with open(model_path / 'bettertrainedmodel.pkl', 'rb') as file:
         model = pickle.load(file)
-
     # Define features and target variable
-    X = test_data[['lastmonth_activity',
-                   'lastyear_activity', 'number_of_employees']]
+
+    X = test_data.drop(columns=dropped_columns)
     y = test_data['exited']
 
     # Make predictions
