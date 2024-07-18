@@ -4,6 +4,7 @@ import os
 import json
 import pickle
 import pandas as pd
+from scoring import clean_test_dataset
 
 # Load config.json and get environment variables
 with open('config.json', 'r') as f:
@@ -25,7 +26,7 @@ def model_predictions(X_dataframe):
     Returns:
         list: List containing model predictions.
     """
-    with open(model_path + '/' + 'trainedmodel.pkl', 'rb') as file:
+    with open(model_path + '/' + 'bettertrainedmodel.pkl', 'rb') as file:
         model = pickle.load(file)
     y_predicted = model.predict(X_dataframe)
     return y_predicted
@@ -39,7 +40,7 @@ def dataframe_summary():
         dict: Dictionary containing summary statistics for numerical columns.
     """
     data_df = pd.read_csv(dataset_csv_path + '/' + 'finaldata.csv')
-    data_df = data_df.drop(['exited'], axis=1)
+    data_df = data_df.drop(['Exited'], axis=1)
     data_df = data_df.select_dtypes('number')
 
     statistics_dict = {}
@@ -132,7 +133,9 @@ def outdated_packages_list():
 
 if __name__ == '__main__':
     testdata = pd.read_csv(test_data_path + '/' + 'testdata.csv')
-    X_df = testdata.drop(['corporation', 'exited'], axis=1)
+    X_df = testdata.drop(
+        ['RowNumber', 'CustomerId', 'Surname', 'Exited'], axis=1)
+    X_df = clean_test_dataset(X_df)
     print(model_predictions(X_df))
     print(dataframe_summary())
     print(missing_percentage())

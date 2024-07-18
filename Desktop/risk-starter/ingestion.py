@@ -24,23 +24,32 @@ INPUT_FOLDER_PATH = Path(config['input_folder_path'])
 OUTPUT_FOLDER_PATH = Path(config['output_folder_path'])
 OUTPUT_CSV_FILE = OUTPUT_FOLDER_PATH / 'finaldata.csv'
 INGESTED_FILES_LOG = OUTPUT_FOLDER_PATH / \
-    f"ingestedfiles_{time.strftime('%y%m%d%H%M%S')}.txt"
+    "ingestedfiles.txt"
 
 
 def clean_dataset(df_list):
     """
-    Concatenate a list of DataFrames and remove duplicate rows.
+    Concatenate a list of DataFrames, remove duplicate rows, and convert strings to numbers.
 
     This function takes a list of pandas DataFrames, concatenates them
-    into a single DataFrame, and then removes any duplicate rows.
+    into a single DataFrame, removes any duplicate rows, and converts
+    string values to numerical values using dictionaries.
 
     Args:
         df_list (list): A list of pandas DataFrames to be concatenated and cleaned.
 
     Returns:
-        pd.DataFrame: A concatenated DataFrame with duplicate rows removed.
+        pd.DataFrame: A concatenated DataFrame with duplicate rows removed
+                      and strings converted to numerical values.
     """
     result = pd.concat(df_list, ignore_index=True).drop_duplicates()
+
+    # Convert strings to numbers
+    for column in result.select_dtypes(include=['object']).columns:
+        unique_values = result[column].unique()
+        value_to_number = {val: num for num, val in enumerate(unique_values)}
+        result[column] = result[column].map(value_to_number)
+
     return result
 
 

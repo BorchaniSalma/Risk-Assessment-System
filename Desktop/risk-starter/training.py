@@ -42,7 +42,7 @@ def train_model(model_output_path=default_model_path, dropped_columns=None):
         None
     """
     if dropped_columns is None:
-        dropped_columns = ['corporation']
+        dropped_columns = ['RowNumber', 'CustomerId', 'Surname', 'Exited']
 
     # Define logistic regression model with appropriate parameters
     logit = LogisticRegression(
@@ -56,7 +56,7 @@ def train_model(model_output_path=default_model_path, dropped_columns=None):
     training_data_path = dataset_csv_path / 'finaldata.csv'
     training_data = pd.read_csv(training_data_path)
     X = training_data.drop(columns=dropped_columns)
-    y = training_data['exited']
+    y = training_data['Exited']
     logging.info("Starting training process.")
 
     # Split the data into training and test sets

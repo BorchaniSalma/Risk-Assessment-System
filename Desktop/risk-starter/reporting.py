@@ -13,7 +13,7 @@ import seaborn as sns
 import json
 import logging
 from pathlib import Path
-
+from scoring import clean_test_dataset
 # Configure logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -37,17 +37,18 @@ def confusion():
     try:
         # Load the test data
         testdata = pd.read_csv(test_data_path / 'testdata.csv')
+        testdata = clean_test_dataset(testdata)
         logging.info("Test data loaded successfully.")
 
         # Load the trained model
-        with open(model_path / 'trainedmodel.pkl', 'rb') as file:
+        with open(model_path / 'bettertrainedmodel.pkl', 'rb') as file:
             model = pickle.load(file)
         logging.info("Trained model loaded successfully.")
 
         # Prepare the features and target variable
-        X = testdata[['lastmonth_activity',
-                      'lastyear_activity', 'number_of_employees']]
-        y = testdata['exited']
+        dropped_columns = ['RowNumber', 'CustomerId', 'Surname', 'Exited']
+        X = testdata.drop(columns=dropped_columns)
+        y = testdata['Exited']
 
         # Make predictions
         predicted = model.predict(X)
@@ -64,7 +65,7 @@ def confusion():
         plt.title('Confusion Matrix')
 
         # Save the plot
-        output_path = model_path / 'confusionmatrix3.png'
+        output_path = model_path / 'confusionmatrix.png'
         plt.savefig(output_path)
         logging.info(f"Confusion matrix saved to {output_path}")
 
