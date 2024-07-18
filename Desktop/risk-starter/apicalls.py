@@ -61,7 +61,7 @@ combined_responses = {
 }
 
 # Write the combined responses to a file
-output_file_path = model_path / 'apireturns2.txt'
+output_file_path = model_path / 'apireturns3.txt'
 with open(output_file_path, 'w') as score_file:
     json.dump(combined_responses, score_file)
 

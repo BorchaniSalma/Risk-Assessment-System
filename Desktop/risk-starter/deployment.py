@@ -40,7 +40,7 @@ def store_model_into_pickle():
     """
     files_to_copy = {
         'ingestedfiles.txt': output_folder_path / 'ingestedfiles.txt',
-        'trainedmodel.pkl': model_path / 'trainedmodel.pkl',
+        'bettertrainedmodel.pkl': model_path / 'bettertrainedmodel.pkl',
         'latestscore.txt': model_path / 'latestscore.txt'
     }
 

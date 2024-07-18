@@ -1,3 +1,10 @@
+"""
+Risk Assessment System
+
+Author : Salma Borchani
+
+Date : 18th July 2024
+"""
 
 from ingestion import merge_multiple_dataframe
 from training import train_model
